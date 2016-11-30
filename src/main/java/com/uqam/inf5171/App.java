@@ -8,6 +8,6 @@ public class App
     {
         GoogleApi api = new GoogleApi();
         
-        api.getDistance("H8R2Y7", "H8N 3E4");    
+        api.getDistance("H8R2Y7", "H8N 3E4");  
     }
 }

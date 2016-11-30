@@ -7,6 +7,12 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.io.StringReader;
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+import javax.json.JsonValue;
 
 public class GoogleApi {
 
@@ -31,14 +37,13 @@ public class GoogleApi {
             System.out.println("Response Code : " + responseCode);
 
             String response = convertResponseToString(con.getInputStream());
-            System.out.println(response);        
+            //System.out.println(response);        
         }catch(UnknownHostException ex){
             System.out.println("Error: Check your internet connection and try again ...");
         }catch(Exception ex){
             System.out.println("Error: An incident occurred. Please try again !");
         }
-        
-        // JSONObject jsonObj = new JSONObject("{\"phonetype\":\"N95\",\"cat\":\"WP\"}");
+          
     }
 
     private String convertResponseToString(InputStream is) throws IOException {
