@@ -36,7 +36,6 @@ public class GoogleApi {
             con.setRequestMethod("GET");
 
             String dataReceived = convertResponseToString(con.getInputStream());
-
             response = responseAsJson(dataReceived);
 
         }catch(UnknownHostException ex){
@@ -55,11 +54,8 @@ public class GoogleApi {
 
         try{
             JSONObject dataReceived = (JSONObject) parser.parse(response);
-
             JSONArray routes = (JSONArray) dataReceived.get("routes");
-            
             JSONObject routesObj = (JSONObject) routes.get(0);
-            
             JSONArray legs = (JSONArray) routesObj.get("legs");
 
             responseToSend = (JSONObject) legs.get(0);

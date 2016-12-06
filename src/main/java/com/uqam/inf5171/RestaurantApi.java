@@ -6,6 +6,8 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 import org.json.simple.parser.JSONParser;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.Future;
 
 public class RestaurantApi {
 
@@ -13,37 +15,42 @@ public class RestaurantApi {
 
     private GoogleApi googleApi;
     private JSONArray listOfRestaurants;
+    private ForkJoinPool threadsPool;
     
     public RestaurantApi(GoogleApi googleApi){
         this.googleApi = googleApi;
         listOfRestaurants = readRestaurants();
     }
 
-    public JSONObject getTheNearestRestaurant(String origin, boolean modeSequential){
+    public JSONObject getTheNearestRestaurant(String origin, int parallelLimit){
+        int begin = 0;
+        int end = listOfRestaurants.size() - 1;
+        boolean modeSequential =  (parallelLimit <= 0);
+
         if(modeSequential){
-            return getTheNearestBySequential(origin, getListOfRestaurants());
+            return getTheNearestBySequential(origin, begin, end);
         }else{
-            return getTheNearestByParallel(origin, getListOfRestaurants());
+            threadsPool = new ForkJoinPool(listOfRestaurants.size() / 2);
+            return getTheNearestByParallel(origin, begin, end, parallelLimit);
         }
     }
 
 
-    public JSONObject getTheNearestBySequential(String origin, JSONArray listOfRestaurants){
+    public JSONObject getTheNearestBySequential(String origin, int begin, int end){
         JSONObject theRestaurant = null;
 
         try{
-            Iterator<JSONObject> iterator = listOfRestaurants.iterator();
-            while (iterator.hasNext()) {
-                JSONObject restaurant = iterator.next();
+            for(int i = begin; i <= end; ++i){
+                JSONObject restaurant = (JSONObject) listOfRestaurants.get(i);
                 JSONObject response = googleApi.getDistance(origin, (String) restaurant.get("postal_code"));
 
-                boolean isNewRestaurantNearest = (Integer) response.get("statusCode") == 200 
-                                                 && isTheNewRestaurantNearest(theRestaurant, response);
+                boolean isNearest = (Integer) response.get("statusCode") == 200 
+                                     && isTheNewRestaurantNearest(theRestaurant, response);
 
-                if(isNewRestaurantNearest) {
+                if(isNearest) {
                     theRestaurant = response;
                     theRestaurant.put("name", restaurant.get("name"));
-                }          
+                } 
             }
         }catch(Exception ex){
             System.out.println("Unable to get the distance : " + ex.getMessage());
@@ -53,15 +60,38 @@ public class RestaurantApi {
         }
     }
 
+    public JSONObject getTheNearestByParallel(String origin, int begin, int end, int parallelLimit){
+        if(end - begin + 1 <= parallelLimit){
+            return getTheNearestBySequential(origin, begin, end);
+        }else{
+            int mid = (begin + end) / 2;
 
-    public JSONObject getTheNearestByParallel(String origin, JSONArray listOfRestaurants){
-        return new JSONObject();
+            Future leftPromise = threadsPool.submit(
+                () -> getTheNearestByParallel(origin, begin, mid, parallelLimit)
+            );
+            JSONObject right = getTheNearestByParallel(origin, mid + 1, end, parallelLimit);
+            JSONObject left = new JSONObject();
+            try{ 
+                left = (JSONObject) leftPromise.get();
+            }catch(Exception e){}
+
+            return isTheNewRestaurantNearest(left, right) ? right : left; 
+        }
     }
-    
+
+    public JSONArray getListOfRestaurants() {
+        return listOfRestaurants;
+    }
+
+    public void setListOfRestaurants(JSONArray listOfRestaurants) {
+        if(listOfRestaurants != null){
+            this.listOfRestaurants = listOfRestaurants;
+        }
+    }
+
     private boolean isTheNewRestaurantNearest(JSONObject oldRestaurant, JSONObject newRestaurant){
 
         if(newRestaurant == null) return false;
-
         if(oldRestaurant == null) return true;
 
         JSONObject oldDuration = (JSONObject) oldRestaurant.get("duration");
@@ -75,17 +105,7 @@ public class RestaurantApi {
 
         return true;             
     }
-
-    private JSONArray getListOfRestaurants() {
-        return listOfRestaurants;
-    }
-
-    private void setListOfRestaurants(JSONArray listOfRestaurants) {
-        if(listOfRestaurants != null){
-            this.listOfRestaurants = listOfRestaurants;
-        }
-    }
-
+    
     private JSONArray readRestaurants(){
         JSONParser parser = new JSONParser();
         JSONArray restaurants = new JSONArray();

@@ -8,7 +8,8 @@ public class App
     {
 
         RestaurantApi restauApi = new RestaurantApi(new GoogleApi()); 
-        JSONObject restaurant = restauApi.getTheNearestRestaurant("H8R2Y7", true); 
+        int paparallelLimit = 1;
+        JSONObject restaurant = restauApi.getTheNearestRestaurant("H8R2Y7", paparallelLimit); 
 
         System.out.println("name : " + restaurant.get("name"));
         System.out.println("duration : " + restaurant.get("duration"));      
