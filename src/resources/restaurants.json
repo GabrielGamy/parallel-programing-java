@@ -1,0 +1,20 @@
+{
+    "restaurants":[
+        {
+            "name": "Labo Culinaire Foodlab",
+            "postal_code": "H2X 1K4"
+        },
+        {
+            "name": "Lola Rosa",
+            "postal_code": "H2X 1W5"
+        },
+        {
+            "name": "Lawrence",
+            "postal_code": "H2T 2L9"
+        },
+        {
+            "name": "Joe Beef",
+            "postal_code": "H3J 1N6"
+        }                
+    ]
+}

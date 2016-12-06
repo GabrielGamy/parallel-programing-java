@@ -8,5 +8,5 @@ mvn exec:java
 ```
 # Run tests
 ```sh
-mvn tests
+mvn test
 ```
