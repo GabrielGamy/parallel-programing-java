@@ -7,7 +7,6 @@ import java.net.UnknownHostException;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.ParseException;
 import org.json.simple.parser.JSONParser;
 
 public class GoogleApi {
@@ -48,7 +47,7 @@ public class GoogleApi {
         } 
     }
 
-    public JSONObject responseAsJson(String response) throws IOException {
+    private JSONObject responseAsJson(String response) throws IOException {
         JSONObject responseToSend = new JSONObject();
         JSONParser parser = new JSONParser();
 

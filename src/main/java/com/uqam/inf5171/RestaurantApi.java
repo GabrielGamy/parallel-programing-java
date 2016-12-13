@@ -4,7 +4,6 @@ import java.io.*;
 import java.util.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.ParseException;
 import org.json.simple.parser.JSONParser;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.Future;
@@ -13,12 +12,13 @@ public class RestaurantApi {
 
     private final static String PATH = "src/resources/restaurants.json";
 
-    private GoogleApi googleApi;
-    private JSONArray listOfRestaurants;
-    private ForkJoinPool threadsPool;
+    protected final GoogleApi googleApi;
+    protected JSONArray listOfRestaurants;
+    protected ForkJoinPool threadsPool;
     
     public RestaurantApi(GoogleApi googleApi){
         this.googleApi = googleApi;
+        this.threadsPool = new ForkJoinPool();
         listOfRestaurants = readRestaurants();
     }
 
@@ -26,13 +26,17 @@ public class RestaurantApi {
         int begin = 0;
         int end = listOfRestaurants.size() - 1;
         boolean modeSequential =  (parallelLimit <= 0);
-
+        
+        JSONObject results = new JSONObject();
+        
         if(modeSequential){
-            return getTheNearestBySequential(origin, begin, end);
+            results = getTheNearestBySequential(origin, begin, end);
         }else{
             threadsPool = new ForkJoinPool(listOfRestaurants.size() / 2);
-            return getTheNearestByParallel(origin, begin, end, parallelLimit);
+            results = getTheNearestByParallel(origin, begin, end, parallelLimit);
+            threadsPool.shutdown();
         }
+        return results;
     }
 
 
@@ -46,7 +50,7 @@ public class RestaurantApi {
 
                 boolean isNearest = (Integer) response.get("statusCode") == 200 
                                      && isTheNewRestaurantNearest(theRestaurant, response);
-
+                
                 if(isNearest) {
                     theRestaurant = response;
                     theRestaurant.put("name", restaurant.get("name"));
@@ -99,14 +103,14 @@ public class RestaurantApi {
 
         if(oldDuration == null || newDuration == null) return false;
 
-        if((Long) oldDuration.get("value") < (Long) newDuration.get("value")) {
+        if((Long) oldDuration.get("value") <= (Long) newDuration.get("value")) {
             return false;
         }
 
         return true;             
     }
     
-    private JSONArray readRestaurants(){
+    protected JSONArray readRestaurants(){
         JSONParser parser = new JSONParser();
         JSONArray restaurants = new JSONArray();
 
@@ -127,11 +131,12 @@ public class RestaurantApi {
         }
     }
 
-    private void displayListOfRestaurants(JSONArray theListOfRestaurants){
+    protected void displayListOfRestaurants(JSONArray theListOfRestaurants){
         Iterator<JSONObject> iterator = theListOfRestaurants.iterator();
         while (iterator.hasNext()) {
             JSONObject restaurant = iterator.next(); 
-            System.out.println(restaurant.get("name"));
+            System.out.println("Name:" + restaurant.get("name") 
+                          + " - Postal Code:" + restaurant.get("postal_code"));
         }
     }       
 }

@@ -1,3 +1,5 @@
+Google api limit request per day: 2500
+
 # Build the project
 ```sh
 mvn clean install
