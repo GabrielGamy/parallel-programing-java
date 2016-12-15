@@ -38,14 +38,20 @@ public class GoogleApiTest extends TestCase {
 
     public void testGetDistance() {
         System.out.println("getDistance");
-        String originPostalCode = "";
-        String destinationPostalCode = "";
-        GoogleApi instance = new GoogleApi();
-        JSONObject expResult = null;
-        JSONObject result = instance.getDistance(originPostalCode, destinationPostalCode);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        String originPostalCode = "H2Y 1J1";
+        String inexistingDestinationPostalCode = "H0X0K0";
+        String existingDestinationPostalCode = "H1X1K1";
+        GoogleApi googleApi = new GoogleApi();
+ 
+        JSONObject result = googleApi.getDistance(originPostalCode, inexistingDestinationPostalCode);
+
+        assertEquals((int) result.get("statusCode"), 404);
+        assertEquals(result.get("message"), "Failed request");
+        
+        result = googleApi.getDistance(originPostalCode, existingDestinationPostalCode);
+        
+        assertEquals((int) result.get("statusCode"), 200);
+        assertEquals(result.get("message"), "Successful request");
     }
     
 }

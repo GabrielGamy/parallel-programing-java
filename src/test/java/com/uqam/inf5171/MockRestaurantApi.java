@@ -17,7 +17,7 @@ public class MockRestaurantApi extends RestaurantApi {
     public JSONArray readRestaurants(){
         JSONArray restaurants = new JSONArray();
         
-        for(long i = 0; i < numberOfRestaurant; ++i){
+        for(long i = 1; i <= numberOfRestaurant; ++i){
             JSONObject aRestaurant = new JSONObject();
             String name = "Restaurant_No_" + i;
             String postal_code = "H" + (i % 10) + "X" + (i % 10) + "K" + (i % 10);
