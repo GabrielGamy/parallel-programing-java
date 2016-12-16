@@ -22,10 +22,10 @@ public class RestaurantApi {
         listOfRestaurants = readRestaurants();
     }
 
-    public JSONObject getTheNearestRestaurant(String origin, int parallelLimit){
+    public JSONObject getTheNearestRestaurant(String origin, int grainsize){
         int begin = 0;
         int end = listOfRestaurants.size() - 1;
-        boolean modeSequential =  (parallelLimit <= 0);
+        boolean modeSequential =  (grainsize <= 0);
         
         JSONObject results = new JSONObject();
         
@@ -33,7 +33,7 @@ public class RestaurantApi {
             results = getTheNearestBySequential(origin, begin, end);
         }else{
             threadsPool = new ForkJoinPool(listOfRestaurants.size() / 2);
-            results = getTheNearestByParallel(origin, begin, end, parallelLimit);
+            results = getTheNearestByParallel(origin, begin, end, grainsize);
             threadsPool.shutdown();
         }
         return results;
@@ -64,16 +64,15 @@ public class RestaurantApi {
         }
     }
 
-    public JSONObject getTheNearestByParallel(String origin, int begin, int end, int parallelLimit){
-        if(end - begin + 1 <= parallelLimit){
+    public JSONObject getTheNearestByParallel(String origin, int begin, int end, int grainsize){
+        if(end - begin + 1 <= grainsize){
             return getTheNearestBySequential(origin, begin, end);
         }else{
             int mid = (begin + end) / 2;
 
-            Future leftPromise = threadsPool.submit(
-                () -> getTheNearestByParallel(origin, begin, mid, parallelLimit)
+            Future leftPromise = threadsPool.submit(() -> getTheNearestByParallel(origin, begin, mid, grainsize)
             );
-            JSONObject right = getTheNearestByParallel(origin, mid + 1, end, parallelLimit);
+            JSONObject right = getTheNearestByParallel(origin, mid + 1, end, grainsize);
             JSONObject left = new JSONObject();
             try{ 
                 left = (JSONObject) leftPromise.get();
@@ -86,7 +85,11 @@ public class RestaurantApi {
     public JSONArray getListOfRestaurants() {
         return listOfRestaurants;
     }
-
+    
+        public int restaurantsSize(){
+        return (listOfRestaurants == null) ? 0 : listOfRestaurants.size();
+    }
+    
     public void setListOfRestaurants(JSONArray listOfRestaurants) {
         if(listOfRestaurants != null){
             this.listOfRestaurants = listOfRestaurants;

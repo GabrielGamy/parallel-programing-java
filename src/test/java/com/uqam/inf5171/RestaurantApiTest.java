@@ -40,7 +40,7 @@ public class RestaurantApiTest extends TestCase {
     public void testGetTheNearestBySequential() {
         System.out.println("getTheNearestBySequential");
         
-        long numberOfRestaurant = 100;
+        long numberOfRestaurant = 50;
         MockRestaurantApi mock = new MockRestaurantApi(new GoogleApi(), numberOfRestaurant);
         
         String origin = "H8R2Y7";
@@ -74,16 +74,16 @@ public class RestaurantApiTest extends TestCase {
     public void testGetTheNearestByParallel() {
         System.out.println("getTheNearestByParallel");
         
-        long numberOfRestaurant = 100;
+        long numberOfRestaurant = 50;
         MockRestaurantApi mock = new MockRestaurantApi(new GoogleApi(), numberOfRestaurant);
         
         String origin = "H8R2Y7";
         int begin = 0;
         int end = mock.getListOfRestaurants().size() - 1;
-        int parallelLimit = 1;
+        int grainsize = 1;
         
         JSONObject sequentialRes = mock.getTheNearestBySequential(origin, begin, end);
-        JSONObject parallelRes = mock.getTheNearestByParallel(origin, begin, end, parallelLimit);
+        JSONObject parallelRes = mock.getTheNearestByParallel(origin, begin, end, grainsize);
         
         assertEquals(sequentialRes.get("name"), parallelRes.get("name"));
     }
