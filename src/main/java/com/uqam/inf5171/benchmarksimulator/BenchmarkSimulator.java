@@ -38,7 +38,7 @@ public class BenchmarkSimulator {
     }
 
     public void warmup() {
-        System.out.print("Warmup (1 min)");
+        System.out.print("\n\nWarmup (1 min)");
 
         double oneMinute = 60; // 1min
         Thread printDots = printDots();

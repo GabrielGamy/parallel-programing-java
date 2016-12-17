@@ -12,7 +12,11 @@ public class App {
         restauApi = new RestaurantApi(new GoogleApi());
         benchmarkSimulator = new BenchmarkSimulator();
         benchmarkSimulator.warmup();
-
+        
+        run();
+    }
+    
+    private static void run(){
         System.out.println("\n----------------------------------");
         System.out.println("----- Mesure de temps -----");
         System.out.println("----------------------------------\n");
@@ -20,11 +24,11 @@ public class App {
         System.out.format("\n%s%16s%16s\n\n", "NB_RESTAURANTS", "NB_THREADS", "TEMPS(sec)");
         
         for(int i = 0; i < restauApi.restaurantsSize(); i++){
-            compareAlgorithme(i);
-        }
+            runAlgorithme(i);
+        }    
     }
-
-    public static void compareAlgorithme(int grainsize) {
+    
+    public static void runAlgorithme(int grainsize) {
         String postal_codes[] = {"H3B 4G5", "H8N 1X1", "H2L 2C4", "K1N 6N5"};
          
         benchmarkSimulator.start();

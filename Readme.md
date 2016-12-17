@@ -12,3 +12,11 @@ mvn exec:java
 ```sh
 mvn test
 ```
+
+Graph of execution times
+
+![Screenshot](https://raw.githubusercontent.com/GabrielGamy/SnakeScaleGame/master/src/resources/images/img.png)
+
+Graph of accelerations
+
+![Screenshot](https://raw.githubusercontent.com/GabrielGamy/SnakeScaleGame/master/src/resources/images/img.png)

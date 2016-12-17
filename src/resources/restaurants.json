@@ -15,6 +15,30 @@
         {
             "name": "Joe Beef",
             "postal_code": "H3J 1N6"
-        }                
+        },
+        {
+            "name": "Le filet",
+            "postal_code": "H2T 2T2"
+        },
+        {
+            "name": "Brit & Chips",
+            "postal_code": "H2Y 2H1"
+        },
+        {
+            "name": "Damas Restaurant",
+            "postal_code": "H2V 1K4"
+        },
+        {
+            "name": "Taverne Gaspar",
+            "postal_code": " H2Y 1J1"
+        },
+        {
+            "name": "3 Amigos",
+            "postal_code": "H2X 3K3"
+        },
+        {
+            "name": "Bâton Rouge Steakhouse & Bar",
+            "postal_code": "H3G 1Y8"
+        }        
     ]
 }
