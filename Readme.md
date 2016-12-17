@@ -13,10 +13,10 @@ mvn exec:java
 mvn test
 ```
 
-Graph of execution times
+# Graph of execution times
 
-![Screenshot](https://raw.githubusercontent.com/GabrielGamy/SnakeScaleGame/master/src/resources/images/img.png)
+![Screenshot](https://raw.githubusercontent.com/GabrielGamy/parallel-programing-java/master/src/resources/temps.png)
 
-Graph of accelerations
+# Graph of accelerations
 
-![Screenshot](https://raw.githubusercontent.com/GabrielGamy/SnakeScaleGame/master/src/resources/images/img.png)
+![Screenshot](https://raw.githubusercontent.com/GabrielGamy/parallel-programing-java/master/src/resources/accelerations.png)

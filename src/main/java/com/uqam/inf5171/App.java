@@ -25,7 +25,7 @@ public class App {
         
         for(int i = 0; i < restauApi.restaurantsSize(); i++){
             runAlgorithme(i);
-        }    
+        }
     }
     
     public static void runAlgorithme(int grainsize) {
